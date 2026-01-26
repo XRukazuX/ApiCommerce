@@ -23,7 +23,7 @@ app.use(express.json()); // para recibir JSON
 app.use(express.urlencoded({ extended: true })); // para recibir formularios HTML
 
 //Routes
-
+app.get("/", (req, res) => res.json({ messaje: "conectado a la api" }));
 const productRoute = require("./routes/productRoutes");
 app.use("/api", productRoute);
 const userRoute = require("./routes/authRoutes");
