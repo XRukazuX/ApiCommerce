@@ -31,9 +31,7 @@ router.post("/register", async (req, res) => {
     doc[0].user.push(newUser);
     await doc[0].save(); // guardar cambios
 
-    res
-      .status(201)
-      .json({ message: "Usuario registrado correctamente", user: newUser });
+    res.status(201).json({ message: "Usuario registrado correctamente" });
   } catch (err) {
     console.error("Error en /register:", err);
     res.status(500).json({ message: "Error al registrar usuario" });
