@@ -6,7 +6,7 @@ const ProductSchema = new mongoose.Schema({
   costo: Number,
   _id: Number,
   imagen: String,
-  descripcion: Array,
+  descripcion: String,
 });
 
 const UserDataSchema = new mongoose.Schema({

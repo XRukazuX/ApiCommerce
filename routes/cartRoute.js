@@ -36,7 +36,7 @@ router.get("/cart", auth, async (req, res) => {
     console.error(err);
     res.status(500).json({ message: "Error al obtener carrito" });
   }
-});
+}); // si se quiere solo usar el carrito para ver los datos unicos sin hacer login solo fue de prueba
 
 // Vaciar carrito
 router.delete("/cart", auth, async (req, res) => {
