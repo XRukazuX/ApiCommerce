@@ -34,16 +34,27 @@ router.post("/newproduct", auth, async (req, res) => {
 
     // Buscamos al usuario en la base de datos
     const doc = await MiModelo.findOne();
+    if (!doc)
+      return res.status(404).json({ message: "Documento no encontrado" });
     const user = doc.user.find((u) => u.email === email);
     if (!user)
       return res.status(404).json({
         message:
           "Usuario no encontrado, no tiene permitido publicar nuevo producto",
       });
-
+    const existe = doc.product.some(
+      (p) =>
+        p.nombre?.trim().toLocaleLowerCase() ===
+        nombre?.trim().toLocaleLowerCase(),
+    );
+    if (existe) {
+      return res.status(400).json({
+        message: "Ya existe un producto con ese nombre",
+      });
+    }
     const nuevoProducto = {
       _id: doc.product.length + 1,
-      nombre,
+      nombre: nombre.trim(),
       costo,
       descripcion,
       imagen,
@@ -63,6 +74,57 @@ router.post("/newproduct", auth, async (req, res) => {
     res.status(500).json({ message: "Error al obtener agregar producto" });
   }
 });
+router.delete("/deleteproduct", auth, async (req, res) => {
+  const { nombre } = req.body;
+
+  if (!nombre) {
+    return res
+      .status(400)
+      .json({ message: "Debes enviar el nombre del producto" });
+  }
+
+  try {
+    const email = req.user.email; // viene del token
+
+    // Buscar documento principal
+    const doc = await MiModelo.findOne();
+    if (!doc)
+      return res
+        .status(404)
+        .json({ message: "Documento principal no encontrado" });
+
+    // Buscar usuario en el documento
+    const user = doc.user.find((u) => u.email === email);
+    if (!user) {
+      return res.status(403).json({
+        message: "Usuario no autorizado para eliminar productos",
+      });
+    }
+
+    // Filtrar el producto por nombre
+    const prevLength = doc.product.length;
+    doc.product = doc.product.filter(
+      (p) =>
+        p.nombre.trim().toLocaleLowerCase() !==
+        nombre.trim().toLocaleLowerCase(),
+    );
+
+    if (doc.product.length === prevLength) {
+      return res.status(404).json({ message: "Producto no encontrado" });
+    }
+
+    // Guardar cambios
+    await doc.save();
+
+    res
+      .status(200)
+      .json({ message: `Producto '${nombre}' eliminado correctamente` });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error al eliminar el producto" });
+  }
+});
+
 module.exports = router;
 
 //Anda route
