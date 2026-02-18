@@ -54,4 +54,5 @@ Separación de responsabilidades (routes, controllers, models)
 👨‍💻 Autor
 
 Desarrollado por Lucas(XRukazuX)
+
 Proyecto educativo / portfolio.
